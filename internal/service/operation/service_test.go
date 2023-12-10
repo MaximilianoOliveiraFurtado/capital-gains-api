@@ -17,7 +17,7 @@ func (m *MockTaxService) OperationTaxResult(operation *entity.Operation) (float6
 	return args.Get(0).(float64), args.Error(1)
 }
 
-func TestOperationTax(t *testing.T) {
+func TestOperationTaxSuccess(t *testing.T) {
 	mockTaxService := new(MockTaxService)
 	service := &Service{
 		taxService: mockTaxService,

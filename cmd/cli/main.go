@@ -43,14 +43,14 @@ func main() {
 			operationsTaxes = append(operationsTaxes, *operationTax)
 		}
 
-	}
+		jsonData, err := json.Marshal(operationsTaxes)
+		if err != nil {
+			fmt.Println("error converting tax list to json:", err)
+			return
+		}
 
-	jsonData, err := json.Marshal(operationsTaxes)
-	if err != nil {
-		fmt.Println("error converting tax list to json:", err)
-		return
-	}
+		fmt.Println(string(jsonData))
 
-	fmt.Println(string(jsonData))
+	}
 
 }
