@@ -1,68 +1,111 @@
 package tax
 
+import (
+	"capital-gains/internal/entity"
+	"capital-gains/internal/utils"
+)
+
 const (
 	taxRate                        = 20
 	taxFreeThresholdOperationValue = 20000
 )
 
-type OperationStats struct {
-	Loss                    float64
-	WeightedAverageUnitCost float64
-	CurrentQuantity         int
-}
-
 type IService interface {
-	weightedAverageUnitCost(operationUnitCost float64, operationQuantity int) float64
-	sellOperationResult(operationUnitCost float64, operationQuantity int) float64
-	//taxDeduction()
-	//taxExemption()
-	//taxDue()
+	OperationTaxResult(operation entity.Operation) float64
 }
 
 type Service struct {
-	operationStats OperationStats
+	finstate *entity.Finstate
 }
 
-func NewService() IService {
-	operationStats := OperationStats{
-		Loss:                    0,
-		WeightedAverageUnitCost: 0,
-		CurrentQuantity:         0,
-	}
+func NewService(finstate *entity.Finstate) IService {
 	return &Service{
-		operationStats: operationStats,
+		finstate: finstate,
 	}
 }
 
-func (s *Service) weightedAverageUnitCost(operationUnitCost float64, operationQuantity int) float64 {
+func (s *Service) OperationTaxResult(operation entity.Operation) float64 {
 
-	currentQuantity := s.operationStats.CurrentQuantity
-	currentWeightedAverage := s.operationStats.WeightedAverageUnitCost
+	switch operation.Operation {
 
-	return ((float64(currentQuantity) * currentWeightedAverage) +
-		(float64(operationQuantity) * operationUnitCost)) /
-		(float64(currentQuantity) + float64(operationUnitCost))
+	case entity.Buy:
+		return s.buyOperationTaxResult(operation.UnitCost, operation.Quantity)
+	case entity.Sell:
+		return s.sellOperationTaxResult(operation.UnitCost, operation.Quantity)
+	default:
+		return 0
 
+	}
 }
 
-func (s *Service) sellOperationResult(operationUnitCost float64, operationQuantity int) float64 {
+func (s *Service) sellOperationTaxResult(operationUnitCost float64, operationQuantity int) float64 {
 
-	var newWeightedAverageUnitCost float64 = s.weightedAverageUnitCost(operationUnitCost, operationQuantity)
-	s.operationStats.WeightedAverageUnitCost = newWeightedAverageUnitCost
-	var weightedAverageTotalCost float64 = newWeightedAverageUnitCost * float64(operationQuantity)
+	var weightedAverageUnitCost float64 = s.finstate.GetWeightedAverageUnitCost()
+
+	var weightedAverageTotalCost float64 = weightedAverageUnitCost * float64(operationQuantity)
 	var operationTotalCost float64 = operationUnitCost * float64(operationQuantity)
 	var tax float64 = 0
 
 	if operationTotalCost < weightedAverageTotalCost {
-		// repository.setLossOperation
+		loss := weightedAverageTotalCost - operationTotalCost
+		s.finstate.Loss += loss
+		return tax
 	}
 
-	if operationTotalCost > weightedAverageTotalCost {
-		// service.taxExemption
-		// service.taxDeduction
-		// tax = repository.taxDue
+	if s.taxExemption(operationTotalCost) {
+		return tax
+	}
+
+	gain := operationTotalCost - weightedAverageTotalCost
+
+	if gain > 0 {
+
+		taxlableValue := s.taxDeduction(gain)
+		tax = s.taxDue(taxlableValue)
+
 	}
 
 	return tax
 
+}
+
+func (s *Service) buyOperationTaxResult(operationUnitCost float64, operationQuantity int) float64 {
+
+	s.weightedAverageUnitCost(operationUnitCost, operationQuantity)
+	s.finstate.CurrentQuantity += operationQuantity
+
+	return 0
+
+}
+
+func (s *Service) weightedAverageUnitCost(operationUnitCost float64, operationQuantity int) {
+
+	currentQuantity := s.finstate.CurrentQuantity
+	currentWeightedAverage := s.finstate.GetWeightedAverageUnitCost()
+
+	var newWeightedAverageUnitCost float64 = ((float64(currentQuantity) * currentWeightedAverage) +
+		(float64(operationQuantity) * operationUnitCost)) /
+		(float64(currentQuantity) + float64(operationQuantity))
+
+	s.finstate.SetWeightedAverageUnitCost(newWeightedAverageUnitCost)
+
+}
+
+func (s *Service) taxExemption(operationTotalCost float64) bool {
+	return operationTotalCost <= taxFreeThresholdOperationValue
+}
+
+func (s *Service) taxDeduction(operationTotalCost float64) float64 {
+	if operationTotalCost <= s.finstate.Loss {
+		loss := s.finstate.Loss - operationTotalCost
+		s.finstate.Loss = loss
+		return 0
+	}
+	taxlableValue := operationTotalCost - s.finstate.Loss
+	s.finstate.Loss = 0
+	return taxlableValue
+}
+
+func (s *Service) taxDue(taxlableValue float64) float64 {
+	return utils.RoundTo2Decimals((taxlableValue * taxRate) / 100)
 }

@@ -9,16 +9,13 @@ import (
 
 	"capital-gains/internal/entity"
 	"capital-gains/internal/service/operation"
-	"capital-gains/internal/service/tax"
-	"capital-gains/internal/utils"
 )
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
-	var lines []string
-	taxSrvice = tax.NewService()
-	operationService = operation.NewService(taxSrvice)
+	var operationsTax []entity.Tax
+	operationService := operation.NewService()
 
 	for {
 		input, err := reader.ReadString('\n')
@@ -38,17 +35,29 @@ func main() {
 			break
 		}
 
-		operation, err = operation.NewService()
-
-		utils.ParseEntity[entity.Operation](input)
+		operations, err := entity.ParseOperations(input)
 		if err != nil {
-			fmt.Println("Erro ao ler a linha x")
+			fmt.Fprintln(os.Stdout, []any{"Erro ao ler a linha %s: {%s}", operations, err}...)
 		}
 
-		lines = append(lines, input)
+		for _, operationInputed := range operations {
+			operationResult := operationService.OperationInput(operationInputed)
+			operationsTax = append(operationsTax, operationResult)
+		}
+
+		//operationResult := operationService.OperationInput(input)
+		//operationsTax = append(operationsTax, operationResult)
+
+		// for _, operationInputed := range input {
+		// 	operationResult := operationService.OperationInput(operationInputed)
+		// 	operationsTax = append(operationsTax, operationResult)
+		// }
+
 	}
 
-	for _, line := range lines {
-		fmt.Println(line)
-	}
+	fmt.Println(operationsTax)
+
+	// for _, operation := range operationsTax {
+	// 	fmt.Println(operation)
+	// }
 }
