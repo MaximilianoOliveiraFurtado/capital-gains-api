@@ -1,6 +1,6 @@
 package entity
 
-import "capital-gains/internal/utils"
+import "capital-gains/internal/util"
 
 type Finstate struct {
 	Loss                    float64
@@ -9,7 +9,7 @@ type Finstate struct {
 }
 
 func (f *Finstate) SetWeightedAverageUnitCost(value float64) {
-	f.weightedAverageUnitCost = utils.RoundTo2Decimals(value)
+	f.weightedAverageUnitCost = util.RoundTo2Decimals(value)
 }
 
 func (f *Finstate) GetWeightedAverageUnitCost() float64 {

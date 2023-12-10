@@ -4,12 +4,13 @@ import (
 	"errors"
 
 	"capital-gains/internal/entity"
-	"capital-gains/internal/utils"
+	"capital-gains/internal/util"
 )
 
 const (
 	taxRate                        = 20
 	taxFreeThresholdOperationValue = 20000
+	UNKNOWN_OPERATION_ERROR        = "unknown operation"
 )
 
 type IService interface {
@@ -35,7 +36,7 @@ func (s *Service) OperationTaxResult(operation *entity.Operation) (float64, erro
 	case entity.Sell:
 		return s.sellOperationTaxResult(operation.UnitCost, operation.Quantity), nil
 	default:
-		return -1, errors.New("unknown operation")
+		return -1, errors.New(UNKNOWN_OPERATION_ERROR)
 
 	}
 }
@@ -119,5 +120,5 @@ func (s *Service) taxDeduction(operationTotalCost float64) float64 {
 }
 
 func (s *Service) taxDue(taxlableValue float64) float64 {
-	return utils.RoundTo2Decimals((taxlableValue * taxRate) / 100)
+	return util.RoundTo2Decimals((taxlableValue * taxRate) / 100)
 }

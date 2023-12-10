@@ -26,12 +26,12 @@ func NewService() IService {
 
 func (s *Service) OperationTax(operation *entity.Operation) *entity.Tax {
 
-	taxEntity, err := s.taxService.OperationTaxResult(operation)
+	tax, err := s.taxService.OperationTaxResult(operation)
 	if err != nil {
 		fmt.Fprintln(os.Stdout, []any{"unexpected error %s: {%s}", operation, err}...)
 	}
 	return &entity.Tax{
-		Tax: taxEntity,
+		Tax: tax,
 	}
 }
 
