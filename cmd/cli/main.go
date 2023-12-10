@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -14,7 +15,7 @@ import (
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
-	var operationsTax []entity.Tax
+	var operationsTaxes []entity.Tax
 	operationService := operation.NewService()
 
 	for {
@@ -25,7 +26,7 @@ func main() {
 		}
 
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error reading from stdin:", err)
+			fmt.Fprintln(os.Stderr, "error reading from stdin:", err)
 			os.Exit(1)
 		}
 
@@ -35,29 +36,21 @@ func main() {
 			break
 		}
 
-		operations, err := entity.ParseOperations(input)
-		if err != nil {
-			fmt.Fprintln(os.Stdout, []any{"Erro ao ler a linha %s: {%s}", operations, err}...)
-		}
+		operations := operationService.InputParseOperation(input)
 
 		for _, operationInputed := range operations {
-			operationResult := operationService.OperationInput(operationInputed)
-			operationsTax = append(operationsTax, operationResult)
+			operationTax := operationService.OperationTax(&operationInputed)
+			operationsTaxes = append(operationsTaxes, *operationTax)
 		}
-
-		//operationResult := operationService.OperationInput(input)
-		//operationsTax = append(operationsTax, operationResult)
-
-		// for _, operationInputed := range input {
-		// 	operationResult := operationService.OperationInput(operationInputed)
-		// 	operationsTax = append(operationsTax, operationResult)
-		// }
 
 	}
 
-	fmt.Println(operationsTax)
+	jsonData, err := json.Marshal(operationsTaxes)
+	if err != nil {
+		fmt.Println("error converting tax list to json:", err)
+		return
+	}
 
-	// for _, operation := range operationsTax {
-	// 	fmt.Println(operation)
-	// }
+	fmt.Println(string(jsonData))
+
 }

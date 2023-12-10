@@ -4,14 +4,31 @@ import "capital-gains/internal/utils"
 
 type Finstate struct {
 	Loss                    float64
-	WeightedAverageUnitCost float64
-	CurrentQuantity         int
+	weightedAverageUnitCost float64
+	currentQuantity         int
 }
 
 func (f *Finstate) SetWeightedAverageUnitCost(value float64) {
-	f.WeightedAverageUnitCost = utils.RoundTo2Decimals(value)
+	f.weightedAverageUnitCost = utils.RoundTo2Decimals(value)
 }
 
 func (f *Finstate) GetWeightedAverageUnitCost() float64 {
-	return f.WeightedAverageUnitCost
+	return f.weightedAverageUnitCost
+}
+
+func (f *Finstate) IncrementQuantityCurrentQuantity(value int) {
+	f.currentQuantity += value
+}
+
+func (f *Finstate) DecrementCurrentQuantity(value int) {
+
+	f.currentQuantity -= value
+	if f.currentQuantity == 0 {
+		f.SetWeightedAverageUnitCost(0)
+	}
+
+}
+
+func (f *Finstate) GetCurrentQuantity() int {
+	return f.currentQuantity
 }

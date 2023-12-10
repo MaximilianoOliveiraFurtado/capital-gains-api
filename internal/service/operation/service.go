@@ -1,12 +1,16 @@
 package operation
 
 import (
+	"fmt"
+	"os"
+
 	"capital-gains/internal/entity"
 	"capital-gains/internal/service/tax"
 )
 
 type IService interface {
-	OperationInput(operation entity.Operation) entity.Tax
+	OperationTax(operation *entity.Operation) *entity.Tax
+	InputParseOperation(operationsInputed string) []entity.Operation
 }
 
 type Service struct {
@@ -20,9 +24,23 @@ func NewService() IService {
 	}
 }
 
-func (s *Service) OperationInput(operation entity.Operation) entity.Tax {
+func (s *Service) OperationTax(operation *entity.Operation) *entity.Tax {
 
-	var taxEntity entity.Tax
-	taxEntity.Tax = s.taxService.OperationTaxResult(operation)
-	return taxEntity
+	taxEntity, err := s.taxService.OperationTaxResult(operation)
+	if err != nil {
+		fmt.Fprintln(os.Stdout, []any{"unexpected error %s: {%s}", operation, err}...)
+	}
+	return &entity.Tax{
+		Tax: taxEntity,
+	}
+}
+
+func (s *Service) InputParseOperation(operationsInputed string) []entity.Operation {
+
+	operation, err := entity.ParseOperations(operationsInputed)
+	if err != nil {
+		fmt.Fprintln(os.Stdout, []any{"error reading operation %s: {%s}", operation, err}...)
+	}
+	return operation
+
 }

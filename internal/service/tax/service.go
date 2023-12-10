@@ -1,6 +1,8 @@
 package tax
 
 import (
+	"errors"
+
 	"capital-gains/internal/entity"
 	"capital-gains/internal/utils"
 )
@@ -11,7 +13,7 @@ const (
 )
 
 type IService interface {
-	OperationTaxResult(operation entity.Operation) float64
+	OperationTaxResult(operation *entity.Operation) (float64, error)
 }
 
 type Service struct {
@@ -24,36 +26,33 @@ func NewService(finstate *entity.Finstate) IService {
 	}
 }
 
-func (s *Service) OperationTaxResult(operation entity.Operation) float64 {
+func (s *Service) OperationTaxResult(operation *entity.Operation) (float64, error) {
 
 	switch operation.Operation {
 
 	case entity.Buy:
-		return s.buyOperationTaxResult(operation.UnitCost, operation.Quantity)
+		return s.buyOperationTaxResult(operation.UnitCost, operation.Quantity), nil
 	case entity.Sell:
-		return s.sellOperationTaxResult(operation.UnitCost, operation.Quantity)
+		return s.sellOperationTaxResult(operation.UnitCost, operation.Quantity), nil
 	default:
-		return 0
+		return -1, errors.New("unknown operation")
 
 	}
 }
 
 func (s *Service) sellOperationTaxResult(operationUnitCost float64, operationQuantity int) float64 {
 
-	var weightedAverageUnitCost float64 = s.finstate.GetWeightedAverageUnitCost()
+	weightedAverageUnitCost := s.finstate.GetWeightedAverageUnitCost()
 
-	s.finstate.CurrentQuantity -= operationQuantity
-	if s.finstate.CurrentQuantity == 0 {
-		s.finstate.SetWeightedAverageUnitCost(0)
-	}
+	s.finstate.DecrementCurrentQuantity(operationQuantity)
 
-	var weightedAverageTotalCost float64 = weightedAverageUnitCost * float64(operationQuantity)
+	weightedAverageTotalCost := weightedAverageUnitCost * float64(operationQuantity)
 	var operationTotalCost float64 = operationUnitCost * float64(operationQuantity)
 	var tax float64 = 0
 
-	if operationTotalCost < weightedAverageTotalCost {
-		loss := weightedAverageTotalCost - operationTotalCost
-		s.finstate.Loss += loss
+	loss := s.lossCalculation(operationTotalCost, weightedAverageTotalCost)
+
+	if loss > 0 {
 		return tax
 	}
 
@@ -77,15 +76,14 @@ func (s *Service) sellOperationTaxResult(operationUnitCost float64, operationQua
 func (s *Service) buyOperationTaxResult(operationUnitCost float64, operationQuantity int) float64 {
 
 	s.weightedAverageUnitCost(operationUnitCost, operationQuantity)
-	s.finstate.CurrentQuantity += operationQuantity
-
+	s.finstate.IncrementQuantityCurrentQuantity(operationQuantity)
 	return 0
 
 }
 
 func (s *Service) weightedAverageUnitCost(operationUnitCost float64, operationQuantity int) {
 
-	currentQuantity := s.finstate.CurrentQuantity
+	currentQuantity := s.finstate.GetCurrentQuantity()
 	currentWeightedAverage := s.finstate.GetWeightedAverageUnitCost()
 
 	var newWeightedAverageUnitCost float64 = ((float64(currentQuantity) * currentWeightedAverage) +
@@ -94,6 +92,15 @@ func (s *Service) weightedAverageUnitCost(operationUnitCost float64, operationQu
 
 	s.finstate.SetWeightedAverageUnitCost(newWeightedAverageUnitCost)
 
+}
+
+func (s *Service) lossCalculation(operationTotalCost float64, weightedAverageTotalCost float64) float64 {
+	if operationTotalCost < weightedAverageTotalCost {
+		loss := weightedAverageTotalCost - operationTotalCost
+		s.finstate.Loss += loss
+		return loss
+	}
+	return 0
 }
 
 func (s *Service) taxExemption(operationTotalCost float64) bool {
