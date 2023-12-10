@@ -32,3 +32,7 @@ func (f *Finstate) DecrementCurrentQuantity(value int) {
 func (f *Finstate) GetCurrentQuantity() int {
 	return f.currentQuantity
 }
+
+func (f *Finstate) SetCurrentQuantity(value int) {
+	f.currentQuantity = value
+}
