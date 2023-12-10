@@ -33,6 +33,7 @@ Download das dependências a partir da raiz do projeto e execução pelo execut�
 
 ```bash
 go mod tidy
+go build -o capital-gains
 ./capital-gains
 ```
 
