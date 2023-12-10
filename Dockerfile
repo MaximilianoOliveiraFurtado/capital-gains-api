@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o capital-gains .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o capital-gains ./cmd/cli
 
 
 FROM alpine:latest  

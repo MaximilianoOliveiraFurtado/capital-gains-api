@@ -1,11 +1,71 @@
 # capital-gains
 
-docker build -t nome-da-sua-aplicacao .
+O objetivo desta aplicação é calcular o imposto a ser pago sobre lucros ou prejuízos de operações no mercado financeiro de ações. 
 
-docker run -it nome-da-sua-aplicacao
 
-docker run -it nome-da-sua-aplicacao /bin/sh
+## build e run com docker
 
-go get -u github.com/zimmski/go-mutesting/...
+Excutar os seguintes comandos na raiz do projeto para build da imagem e executar a mesma
+
+```bash
+docker build -t capital-gains .
+docker run -it capital-gains
+```
+
+
+## executar localmente
+
+- Requer instalação do GO v1.21: https://go.dev/dl/
+
+- Download das dependências a partir da raiz do projeto e run na pasta cmd/cli
+
+```bash
+go mod tidy
+go run main.go
+```
+
+
+## build local
+
+- Requer instalação do GO v1.21: https://go.dev/dl/
+
+- Download das dependências a partir da raiz do projeto e run pelo executável
+
+```bash
+go mod tidy
+./capital-gains
+```
+
+
+## teste
+
+Unitários e integração
+
+```bash
 go test ./... -cover
+```
+
+Mutação: Rodar os comandos (a partir da raiz do projeto) para instalar o binário do mutante na maquina e posteriormente a execução.
+
+```bash
+go get -u github.com/zimmski/go-mutesting/...
 go-mutesting ./...
+```
+
+
+### Testes
+
+- Os testes unitários estão distribuídos dentro das pastas de seus respectivos pacotes.
+- Os testes de integração estão centralizados na pasta cmd/cli, e testa a integração a partir da main.go.
+- Foi adotada a estratégia de centralizar o código dos testes integrados dentro de uma única função que é chamada para para os diversos casos de uso. Apesar
+de compreender que em um cenário produtivo isso por trazer desvantagens, acredito que pra esse caso só há ganhos, visto a quatidade de código repetido e a baixa manutenabilidade que o arquivo teria.
+- Há também uma pasta: ```test/integration/data```, nela estão os cenários exemplificados no desafio, o nome da pasta "test" é apenas para deixar mais evidente o objetivo dos arquivos estarem ali.
+- Infelizmente, por causa de compromissos pessoais, não consegui investir mais tempo para cobrir mais ramificações lógicas.
+
+
+### Evolução
+
+- De acordo com a descrição do desafio entendi que o objetivo era ter uma solução o mais simples e flexível possível, com menos dependencias inclusive. Nesse sentido creio que ficou como oportunidade melhorias como logs de debug, camada de repository, dependency injection desacoplada, entre outras.
+- A segregação da camada de input via CLI, permite facilmente a integração com camada de API, ou qualquer outro tipo de input como fila, notificação, etc.
+
+
