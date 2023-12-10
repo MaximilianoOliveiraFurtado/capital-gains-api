@@ -42,6 +42,11 @@ func (s *Service) sellOperationTaxResult(operationUnitCost float64, operationQua
 
 	var weightedAverageUnitCost float64 = s.finstate.GetWeightedAverageUnitCost()
 
+	s.finstate.CurrentQuantity -= operationQuantity
+	if s.finstate.CurrentQuantity == 0 {
+		s.finstate.SetWeightedAverageUnitCost(0)
+	}
+
 	var weightedAverageTotalCost float64 = weightedAverageUnitCost * float64(operationQuantity)
 	var operationTotalCost float64 = operationUnitCost * float64(operationQuantity)
 	var tax float64 = 0
@@ -52,15 +57,15 @@ func (s *Service) sellOperationTaxResult(operationUnitCost float64, operationQua
 		return tax
 	}
 
+	gain := operationTotalCost - weightedAverageTotalCost
+	taxlableValue := s.taxDeduction(gain)
+
 	if s.taxExemption(operationTotalCost) {
 		return tax
 	}
 
-	gain := operationTotalCost - weightedAverageTotalCost
-
 	if gain > 0 {
 
-		taxlableValue := s.taxDeduction(gain)
 		tax = s.taxDue(taxlableValue)
 
 	}
