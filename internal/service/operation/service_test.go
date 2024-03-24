@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"testing"
 
+	"capital-gains/internal/service/tax"
+
 	"github.com/stretchr/testify/mock"
 )
 
@@ -15,6 +17,16 @@ type MockTaxService struct {
 func (m *MockTaxService) OperationTaxResult(operation *entity.Operation) (float64, error) {
 	args := m.Called(operation)
 	return args.Get(0).(float64), args.Error(1)
+}
+
+func newFinstate() *entity.Finstate {
+	finstate := &entity.Finstate{
+		Loss: 0,
+	}
+	finstate.SetWeightedAverageUnitCost(0)
+	finstate.SetCurrentQuantity(0)
+
+	return finstate
 }
 
 func TestOperationTaxSuccess(t *testing.T) {
@@ -41,7 +53,7 @@ func TestOperationTaxSuccess(t *testing.T) {
 }
 
 func TestInputParseOperation(t *testing.T) {
-	service := NewService()
+	service := NewService(tax.NewService(newFinstate()))
 
 	input := `[{"operation":"sell", "unit-cost":10.00, "quantity": 5000}]`
 	expectedOperations := []entity.Operation{}

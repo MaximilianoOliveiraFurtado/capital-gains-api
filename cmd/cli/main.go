@@ -10,13 +10,15 @@ import (
 
 	"capital-gains/internal/entity"
 	"capital-gains/internal/service/operation"
+	"capital-gains/internal/service/tax"
 )
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	var operationsTaxes []entity.Tax
-	operationService := operation.NewService()
+	taxService := tax.NewService(&entity.Finstate{})
+	operationService := operation.NewService(taxService)
 
 	for {
 		input, err := reader.ReadString('\n')

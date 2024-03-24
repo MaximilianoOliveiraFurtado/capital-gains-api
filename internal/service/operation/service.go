@@ -17,8 +17,7 @@ type Service struct {
 	taxService tax.IService
 }
 
-func NewService() IService {
-	taxService := tax.NewService(&entity.Finstate{})
+func NewService(taxService tax.IService) IService {
 	return &Service{
 		taxService: taxService,
 	}
