@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	"capital-gains/internal/service/operation"
-	"capital-gains/internal/service/tax"
+	"capital-gains-api/internal/service/operation"
+	"capital-gains-api/internal/service/tax"
 
 	"github.com/google/wire"
 )

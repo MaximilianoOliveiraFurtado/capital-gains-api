@@ -3,8 +3,8 @@ package tax
 import (
 	"errors"
 
-	"capital-gains/internal/entity"
-	"capital-gains/internal/util"
+	"capital-gains-api/internal/entity"
+	"capital-gains-api/internal/util"
 )
 
 const (

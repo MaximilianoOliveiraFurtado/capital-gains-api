@@ -1,7 +1,7 @@
 package tax
 
 import (
-	"capital-gains/internal/entity"
+	"capital-gains-api/internal/entity"
 	"testing"
 )
 

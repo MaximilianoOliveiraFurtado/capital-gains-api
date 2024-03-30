@@ -1,6 +1,6 @@
 package entity
 
-import "capital-gains/internal/util"
+import "capital-gains-api/internal/util"
 
 type Finstate struct {
 	Loss                    float64
