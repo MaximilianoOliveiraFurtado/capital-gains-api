@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"encoding/json"
@@ -7,10 +7,12 @@ import (
 
 	"capital-gains-api/internal/entity"
 	"capital-gains-api/internal/service/operation"
+
+	"capital-gains-api/cmd/rest/controller"
 )
 
 type Handler struct {
-	controller       IController
+	controller       controller.IController
 	operationService operation.IService
 }
 
@@ -20,7 +22,7 @@ type Response struct {
 	Code    int    `json:code`
 }
 
-func NewHandler(controller IController, operationService operation.IService) *Handler {
+func NewHandler(controller controller.IController, operationService operation.IService) *Handler {
 	return &Handler{
 		controller:       controller,
 		operationService: operationService,
@@ -29,16 +31,16 @@ func NewHandler(controller IController, operationService operation.IService) *Ha
 
 func (h *Handler) PostTaxOperation(w http.ResponseWriter, r *http.Request) {
 
-	var operations []entity.Operation
+	var operationsInput []entity.Operation
 
 	defer r.Body.Close()
 
-	if err := json.NewDecoder(r.Body).Decode(operations); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&operationsInput); err != nil {
 		fmt.Println(err, "error converting tax list to json")
 		return
 	}
 
-	response, err := h.controller.PostTaxOperation(r.Context(), operations)
+	response, err := h.controller.PostTaxOperation(r.Context(), operationsInput)
 	if err != nil {
 		h.writeResponse(w, http.StatusInternalServerError, err.Error(), nil)
 	}

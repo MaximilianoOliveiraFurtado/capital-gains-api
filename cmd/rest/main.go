@@ -3,15 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"capital-gains-api/cmd/rest/provider"
 )
 
 func main() {
 	ctx := context.Background()
 
-	provider, err := Initialize(ctx)
+	app, err := provider.Initialize(ctx)
 	if err != nil {
-		fmt.Println("start api error:", err)
+		fmt.Println("start app error:", err)
 	}
 
-	provider.ListenAndServe()
+	err = app.Router.ListenAndServe()
+	if err != nil {
+		fmt.Println("start server error:", err)
+	}
+
 }

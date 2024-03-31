@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
 	"fmt"
@@ -6,18 +6,18 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/go-chi/cors"
+
+	"capital-gains-api/cmd/rest/handler"
 )
 
 type Router struct {
 	port                string
 	timeout             time.Duration
-	cors                cors.Options
 	router              *chi.Mux
-	operationTaxHandler *Handler
+	operationTaxHandler *handler.Handler
 }
 
-func NewHTTPRouter(operationTaxHandler *Handler) *Router {
+func NewHTTPRouter(operationTaxHandler *handler.Handler) *Router {
 	router := &Router{
 		router:              chi.NewRouter(),
 		port:                "8080",
@@ -25,8 +25,6 @@ func NewHTTPRouter(operationTaxHandler *Handler) *Router {
 		timeout:             3000,
 	}
 
-	// router.corsOptions()
-	// router.Middlewares()
 	router.routes()
 
 	return router
@@ -38,7 +36,7 @@ func (r *Router) routes() {
 
 func (r *Router) operationTaxRouters() {
 
-	r.router.Route("operation", func(router chi.Router) {
+	r.router.Route("/operation", func(router chi.Router) {
 		router.Post("/tax", r.operationTaxHandler.PostTaxOperation)
 	})
 
@@ -48,7 +46,7 @@ func (r *Router) ListenAndServe() error {
 	fmt.Println("service running on 8080 http port...")
 
 	server := &http.Server{
-		Addr:              "8080",
+		Addr:              ":8080",
 		ReadHeaderTimeout: 3000,
 		Handler:           r.router,
 	}
