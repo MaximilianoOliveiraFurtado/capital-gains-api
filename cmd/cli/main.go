@@ -17,7 +17,7 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	var operationsTaxes []entity.Tax
-	taxService := tax.NewService(&entity.Finstate{})
+	taxService := tax.NewService()
 	operationService := operation.NewService(taxService)
 
 	for {
@@ -40,8 +40,9 @@ func main() {
 
 		operations := operationService.InputParseOperation(input)
 
+		finstate := &entity.Finstate{}
 		for _, operationInputed := range operations {
-			operationTax := operationService.OperationTax(&operationInputed)
+			operationTax := operationService.OperationTax(&operationInputed, finstate)
 			operationsTaxes = append(operationsTaxes, *operationTax)
 		}
 

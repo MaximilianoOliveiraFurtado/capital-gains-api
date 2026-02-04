@@ -7,9 +7,9 @@ package provider
 import (
 	"context"
 
-	"capital-gains-api/cmd/rest/controller"
-	"capital-gains-api/cmd/rest/handler"
-	"capital-gains-api/cmd/rest/router"
+	"capital-gains-api/cmd/api/controller"
+	"capital-gains-api/cmd/api/handler"
+	"capital-gains-api/cmd/api/router"
 	"capital-gains-api/internal/entity"
 	"capital-gains-api/internal/service/operation"
 	"capital-gains-api/internal/service/tax"

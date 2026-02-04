@@ -9,7 +9,7 @@ import (
 )
 
 type IService interface {
-	OperationTax(operation *entity.Operation) *entity.Tax
+	OperationTax(operation *entity.Operation, finstate *entity.Finstate) *entity.Tax
 	InputParseOperation(operationsInputed string) []entity.Operation
 }
 
@@ -23,9 +23,9 @@ func NewService(taxService tax.IService) IService {
 	}
 }
 
-func (s *Service) OperationTax(operation *entity.Operation) *entity.Tax {
+func (s *Service) OperationTax(operation *entity.Operation, finstate *entity.Finstate) *entity.Tax {
 
-	tax, err := s.taxService.OperationTaxResult(operation)
+	tax, err := s.taxService.OperationTaxResult(operation, finstate)
 	if err != nil {
 		fmt.Fprintln(os.Stdout, []any{"unexpected error %s: {%s}", operation, err}...)
 	}
