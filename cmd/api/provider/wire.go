@@ -10,7 +10,6 @@ import (
 	"capital-gains-api/cmd/api/controller"
 	"capital-gains-api/cmd/api/handler"
 	"capital-gains-api/cmd/api/router"
-	"capital-gains-api/internal/entity"
 	"capital-gains-api/internal/service/operation"
 	"capital-gains-api/internal/service/tax"
 
@@ -36,10 +35,6 @@ var handlers = wire.NewSet(
 	handler.NewHandler,
 )
 
-var entities = wire.NewSet(
-	entity.NewFinstate,
-)
-
 var services = wire.NewSet(
 	tax.NewService,
 	operation.NewService,
@@ -52,7 +47,6 @@ var controllers = wire.NewSet(
 func Initialize(ctx context.Context) (Wire, error) {
 	wire.Build(
 		handlers,
-		entities,
 		services,
 		controllers,
 		cfg,

@@ -10,19 +10,16 @@ import (
 	"capital-gains-api/cmd/api/controller"
 	"capital-gains-api/cmd/api/handler"
 	"capital-gains-api/cmd/api/router"
-	"capital-gains-api/internal/entity"
 	"capital-gains-api/internal/service/operation"
 	"capital-gains-api/internal/service/tax"
 	"context"
-
 	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
 
 func Initialize(ctx context.Context) (Wire, error) {
-	finstate := entity.NewFinstate()
-	iService := tax.NewService(finstate)
+	iService := tax.NewService()
 	operationIService := operation.NewService(iService)
 	iController := controller.NewOperationTaxController(operationIService)
 	handlerHandler := handler.NewHandler(iController, operationIService)
@@ -48,8 +45,6 @@ var cfg = wire.NewSet(
 )
 
 var handlers = wire.NewSet(handler.NewHandler)
-
-var entities = wire.NewSet(entity.NewFinstate)
 
 var services = wire.NewSet(tax.NewService, operation.NewService)
 

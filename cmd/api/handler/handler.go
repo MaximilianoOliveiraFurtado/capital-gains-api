@@ -19,7 +19,7 @@ type Handler struct {
 type Response struct {
 	Content any    `json:"content"`
 	Message string `json:"message"`
-	Code    int    `json:code`
+	Code    int    `json:"code"`
 }
 
 func NewHandler(controller controller.IController, operationService operation.IService) *Handler {
@@ -45,7 +45,7 @@ func (h *Handler) PostTaxOperation(w http.ResponseWriter, r *http.Request) {
 		h.writeResponse(w, http.StatusInternalServerError, err.Error(), nil)
 	}
 
-	h.writeResponse(w, http.StatusInternalServerError, "", response)
+	h.writeResponse(w, http.StatusOK, "Ok", response)
 
 }
 
