@@ -3,6 +3,11 @@
 O objetivo desta aplicação é calcular o imposto a ser pago sobre lucros ou prejuízos de operações no mercado financeiro de ações.
 
 
+## documentação funcional
+
+As regras de negócio podem ser consultadas no arquivo [Business Rules – Capital Gains](docs/business.md)
+
+
 ## build e run com docker
 
 Execute os seguintes comandos na raiz do projeto para construir a imagem e executá-la:
@@ -15,7 +20,7 @@ docker run -it capital-gains
 
 ## executar localmente
 
-Requer a instalação do GO v1.21: https://go.dev/dl/
+Requer a instalação do GO v1.26: https://go.dev/dl/
 
 Download das dependências a partir da raiz do projeto e execução na pasta  cmd/cli
 
