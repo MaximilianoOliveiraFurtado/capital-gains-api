@@ -1,10 +1,10 @@
-package main
+package api
 
 import (
 	"context"
 	"fmt"
 
-	"capital-gains-api/cmd/rest/provider"
+	"capital-gains-api/cmd/api/provider"
 )
 
 func main() {

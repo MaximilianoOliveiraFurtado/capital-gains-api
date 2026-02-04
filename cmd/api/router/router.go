@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-chi/chi"
 
-	"capital-gains-api/cmd/rest/handler"
+	"capital-gains-api/cmd/api/handler"
 )
 
 type Router struct {

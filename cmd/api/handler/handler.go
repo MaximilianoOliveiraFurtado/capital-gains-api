@@ -8,7 +8,7 @@ import (
 	"capital-gains-api/internal/entity"
 	"capital-gains-api/internal/service/operation"
 
-	"capital-gains-api/cmd/rest/controller"
+	"capital-gains-api/cmd/api/controller"
 )
 
 type Handler struct {
