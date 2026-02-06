@@ -20,8 +20,20 @@ docker run -it capital-gains
 
 ## executar localmente
 
-Requer a instalação do GO v1.26: https://go.dev/dl/
+Subir localmente a infraestrutura da AWS via LocalStack a partir da raiz do projeto
+Criar fila do SQS
+Exemplo de envio de mensagem
 
+```bash
+docker compose up -d
+docker exec -it localstack awslocal sqs create-queue --queue-name operation-tax
+docker exec -it localstack awslocal sqs send-message \
+  --queue-url http://localhost:4566/000000000000/operation-tax \
+  --message-body '[{"operation":"buy","unit-cost":10.00,"quantity":10000},{"operation":"sell","unit-cost":2.00,"quantity":5000},{"operation":"sell","unit-cost":20.00,"quantity":2000},{"operation":"sell","unit-cost":20.00,"quantity":2000},{"operation":"sell","unit-cost":25.00,"quantity":1000}]'
+
+```
+
+*Requer a instalação do GO v1.26: https://go.dev/dl/
 Download das dependências a partir da raiz do projeto e execução na pasta  cmd/cli
 
 ```bash
