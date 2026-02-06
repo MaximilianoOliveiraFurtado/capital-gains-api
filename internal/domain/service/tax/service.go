@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"capital-gains-api/internal/domain/entity"
-	"capital-gains-api/internal/util"
+	"capital-gains-api/internal/mathutil"
 )
 
 const (
@@ -115,5 +115,5 @@ func (s *Service) taxDeduction(operationTotalCost float64, finstate *entity.Fins
 }
 
 func (s *Service) taxDue(taxlableValue float64) float64 {
-	return util.RoundTo2Decimals((taxlableValue * taxRate) / 100)
+	return mathutil.RoundTo2Decimals((taxlableValue * taxRate) / 100)
 }
