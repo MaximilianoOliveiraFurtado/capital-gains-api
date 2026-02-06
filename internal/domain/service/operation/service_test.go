@@ -1,11 +1,11 @@
 package operation
 
 import (
-	"capital-gains-api/internal/entity"
+	"capital-gains-api/internal/domain/entity"
 	"reflect"
 	"testing"
 
-	"capital-gains-api/internal/service/tax"
+	"capital-gains-api/internal/domain/service/tax"
 
 	"github.com/stretchr/testify/mock"
 )

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"capital-gains-api/internal/entity"
-	"capital-gains-api/internal/service/operation"
+	"capital-gains-api/internal/domain/entity"
+	"capital-gains-api/internal/domain/service/operation"
 
-	"capital-gains-api/cmd/api/controller"
+	"capital-gains-api/internal/http/controller"
 )
 
 type Handler struct {

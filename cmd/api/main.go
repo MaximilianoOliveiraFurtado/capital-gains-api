@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"capital-gains-api/cmd/api/provider"
+	"capital-gains-api/internal/http/provider"
 )
 
 func main() {

@@ -7,11 +7,11 @@ package provider
 import (
 	"context"
 
-	"capital-gains-api/cmd/api/controller"
-	"capital-gains-api/cmd/api/handler"
-	"capital-gains-api/cmd/api/router"
-	"capital-gains-api/internal/service/operation"
-	"capital-gains-api/internal/service/tax"
+	"capital-gains-api/internal/domain/service/operation"
+	"capital-gains-api/internal/domain/service/tax"
+	"capital-gains-api/internal/http/controller"
+	"capital-gains-api/internal/http/handler"
+	"capital-gains-api/internal/http/router"
 
 	"github.com/google/wire"
 )

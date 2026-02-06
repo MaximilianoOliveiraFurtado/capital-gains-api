@@ -3,7 +3,7 @@ package tax
 import (
 	"errors"
 
-	"capital-gains-api/internal/entity"
+	"capital-gains-api/internal/domain/entity"
 	"capital-gains-api/internal/util"
 )
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"capital-gains-api/internal/entity"
-	"capital-gains-api/internal/service/tax"
+	"capital-gains-api/internal/domain/entity"
+	"capital-gains-api/internal/domain/service/tax"
 )
 
 type IService interface {

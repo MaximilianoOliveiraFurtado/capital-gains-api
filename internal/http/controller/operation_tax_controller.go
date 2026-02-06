@@ -3,8 +3,8 @@ package controller
 import (
 	"context"
 
-	"capital-gains-api/internal/entity"
-	"capital-gains-api/internal/service/operation"
+	"capital-gains-api/internal/domain/entity"
+	"capital-gains-api/internal/domain/service/operation"
 )
 
 type IController interface {

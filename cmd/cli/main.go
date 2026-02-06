@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"capital-gains-api/internal/entity"
-	"capital-gains-api/internal/service/operation"
-	"capital-gains-api/internal/service/tax"
+	"capital-gains-api/internal/domain/entity"
+	"capital-gains-api/internal/domain/service/operation"
+	"capital-gains-api/internal/domain/service/tax"
 )
 
 func main() {
